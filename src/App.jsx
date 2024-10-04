@@ -1,8 +1,10 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
 
 const App = () => {
   const form = useRef();
+  const [message, setMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -13,10 +15,20 @@ const App = () => {
       })
       .then(
         () => {
-          console.log("SUCCESS!");
+          setMessage("Your message was sent successfully!");
+          setIsVisible(true);
+          setTimeout(() => {
+            setIsVisible(false);
+            setTimeout(() => setMessage(""), 300);
+          }, 3000);
         },
         (error) => {
-          console.log("FAILED...", error.text);
+          setMessage("Failed to send your message. Please try again.");
+          setIsVisible(true);
+          setTimeout(() => {
+            setIsVisible(false);
+            setTimeout(() => setMessage(""), 300);
+          }, 3000);
         }
       );
 
@@ -68,9 +80,20 @@ const App = () => {
           type="submit"
           className="w-full bg-green-500 text-white rounded-lg p-4 font-semibold hover:bg-green-600 transition duration-300 ease-in-out"
         >
-          Send Message
+          Submit
         </button>
       </form>
+      {message && (
+        <div
+          className={`fixed top-4 left-4 right-4 bg-green-200 border border-green-400 text-green-800 px-4 py-3 rounded-md shadow-lg text-center transition-all duration-500 ease-in-out ${
+            isVisible
+              ? "translate-y-0 opacity-100"
+              : "-translate-y-10 opacity-0"
+          }`}
+        >
+          {message}
+        </div>
+      )}
     </div>
   );
 };
